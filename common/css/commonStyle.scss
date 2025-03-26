@@ -1,0 +1,211 @@
+// 自定义css样式，在App.vue中导入 公用css
+.VERSION{
+	text-align: center;
+	font-size: 16rpx;
+	color: #666;
+	opacity: 0.3;
+}
+		// 缺省样式
+		.default_box{
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%,-50%);
+			font-size: 28rpx;
+			color: #666;
+			text-align: center;
+			.imgs{
+				width: 200rpx;
+				height: 200rpx;
+				margin-bottom: 40rpx;
+			}
+			image{
+				width: 200rpx;
+				height: 200rpx;
+				margin-bottom: 40rpx;
+			}
+		}
+		// 通用下面小方块标题
+		.bottom_title{
+			font-size: 36rpx;
+			font-weight: bold;
+			color: #1A1A1A;
+			line-height: 42rpx;
+			position: relative;
+			display: inline-block;
+			z-index: 3;
+			&::after{
+				position: absolute;
+				left: 50%;
+				bottom: 0;
+				transform: translateX(-50%);
+				display: inline-block;
+				content: '';
+				width: 100%;
+				height: 12rpx;
+				background: linear-gradient(91deg, rgba(251,232,197,0.1) 0%, #FFAA26 100%);
+				border-radius: 12rpx;
+				z-index: -1;
+			}
+		}
+		
+		// 通用按钮占位
+		.bottom_box{
+			width: 750rpx;
+			height: 188rpx;
+		}
+		// 底部按钮
+		.bottom_btn{
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			padding: 10rpx 30rpx 68rpx;
+			display: flex;
+			align-items: center;
+			background: #fff;
+			z-index: 4;
+			
+			.btn{
+				width: 690rpx;
+				height: 96rpx;
+				background: linear-gradient(157deg, #FFA00C 31%, #FFBA4F 100%);
+				border-radius: 20rpx;
+				font-size: 36rpx;
+				font-weight: bold;
+				color: #FFFFFF;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				&:nth-child(2){
+					margin-left: 30rpx;
+				}
+				&.cancel{
+					width: 330rpx;
+					border: 2rpx solid #949599;
+					background: #fff;
+					color: #666666;
+				}
+				&.w330{
+					width: 330rpx;
+				}
+				&.w690{
+					width: 690rpx;
+				}
+			}
+		}
+		// 白色字体
+		.cfff{
+			color: #fff;
+		}
+		// 清楚按钮默认样式
+		.btn_clear{
+			border-radius: 0;
+			margin: 0;
+			padding: 0;
+			text-align: left;
+		}
+		.btn_clear::after{
+			border: 0 !important;
+		}
+	.tac{
+		text-align: center;
+	}
+	.tal{
+		text-align: left;
+	}
+	/* 弹性盒子 */
+	.df{
+		display: flex;
+	}
+	.jcc{
+		justify-content: center;
+	}
+	.aic{
+		align-items: center;
+	}
+	.jcsb{
+		justify-content: space-between;
+	}
+	.jcsa{
+		justify-content: space-around;
+	}
+	.jcfe{
+		justify-content: flex-end;
+	}
+	.fww{
+		flex-wrap: wrap;
+	}
+	.jcl{
+		justify-content: left;
+	}
+	.jcr{
+		justify-content: right;
+	}
+	.fdc{
+		flex-direction: column;
+	}
+	.aifs{
+		align-items: flex-start;
+	}
+	.aife{
+		align-items: flex-end;
+	}
+	.dis_sb{
+		display: flex;
+        justify-content: space-between;
+		align-items: center;
+	}
+	.dis_cc {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	/* 隐藏 */
+	.dn{
+		display: none;
+	}
+	.otw{
+		overflow: hidden; //超出的文本隐藏
+		text-overflow: ellipsis; //溢出用省略号显示
+		white-space: nowrap; //溢出不换行
+	}
+	.otw2{
+		word-break: break-all;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+	/* 定位 */
+	.pr{
+		position: relative;
+	}
+	.pa{
+		position: absolute;
+	}
+	/* 宽高  */
+	.w100{
+		width: 100%;
+	}
+	.h100{
+		height: 100%;
+	}
+	
+	.mt20 {
+		margin-top: 20rpx;
+	}
+	.mt40 {
+		margin-top: 40rpx;
+	}
+.reset-button{
+	margin: 0;
+	padding: 0;
+	font-size: inherit;
+	line-height: inherit;
+	background-color: transparent;
+	color: inherit;
+	&::after{
+		border: none;
+	}
+}
