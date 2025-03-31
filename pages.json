@@ -12,9 +12,9 @@
       }
     },
     {
-      "path": "pages/tabbar/example",
+      "path": "pages/tabbar/sos",
       "style": {
-        "navigationBarTitleText": "例子"
+        "navigationBarTitleText": "紧急呼救"
         // "navigationStyle": "custom"
       }
     },
@@ -56,6 +56,27 @@
             "navigationBarTitleText": "生活服务",
             "enablePullDownRefresh": false
           }
+        },
+        {
+          "path": "healthAgenda",
+          "style": {
+            "navigationBarTitleText": "健康日程",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "addAgenda",
+          "style": {
+            "navigationBarTitleText": "新增日程",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "askAQuestion",
+          "style": {
+            "navigationBarTitleText": "我的提问",
+            "enablePullDownRefresh": false
+          }
         }
       ]
     }
@@ -84,8 +105,8 @@
       {
         "selectedIconPath": "/static/tabbar/example-a.png",
         "iconPath": "/static/tabbar/example.png",
-        "pagePath": "pages/tabbar/example",
-        "text": "例子"
+        "pagePath": "pages/tabbar/sos",
+        "text": "紧急呼救"
       },
       {
         "selectedIconPath": "/static/tabbar/mine-a.png",

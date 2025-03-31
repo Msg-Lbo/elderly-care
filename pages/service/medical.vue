@@ -37,7 +37,7 @@
             <text class="card-name">档案管理</text>
           </view>
           <view class="line"></view>
-          <view class="card">
+          <view class="card" @click="$fn.jumpPage(`/pages/service/healthAgenda`)">
             <view class="icon">
               <u-image src="/static/common/c5.png" width="110rpx" height="100rpx" mode="widthFix"></u-image>
             </view>
@@ -48,7 +48,7 @@
     </section>
     <section class="health-service" v-if="activeTab === 1">
       <view class="left">
-        <view class="service-item">
+        <view class="service-item" @click="handleAppointment">
           <view class="title">预约挂号</view>
           <view class="desc">专家号在线预约</view>
           <view class="service-icon">
@@ -66,7 +66,7 @@
             <u-image src="/static/common/c8.png" width="60rpx" height="80rpx" mode="aspectFill"></u-image>
           </view>
         </view>
-        <view class="service-item">
+        <view class="service-item" @click="openNavigation">
           <view>
             <view class="title">线下导医</view>
             <view class="desc">长者就医无压力</view>
@@ -113,6 +113,7 @@ export default {
           unit: "%",
           icon: "/static/common/h2.png",
         },
+        
         {
           label: "血糖",
           value: 80,
@@ -138,6 +139,53 @@ export default {
     // 切换tab
     handleSwitch(value) {
       this.activeTab = value;
+    },
+
+    // 打开导航
+    openNavigation() {
+      // 获取当前位置
+      uni.getLocation({
+        type: "gcj02",
+        success: (res) => {
+          const latitude = res.latitude;
+          const longitude = res.longitude;
+
+          // 打开地图
+          uni.openLocation({
+            latitude: latitude,
+            longitude: longitude,
+            scale: 18,
+            success: () => {
+              console.log("打开地图成功");
+            },
+            fail: (err) => {
+              console.error("打开地图失败", err);
+              uni.showToast({
+                title: "打开地图失败",
+                icon: "none",
+              });
+            },
+          });
+        },
+        fail: (err) => {
+          console.error("获取位置失败", err);
+          uni.showToast({
+            title: "获取位置失败",
+            icon: "none",
+          });
+        },
+      });
+    },
+
+    // 处理预约挂号
+    handleAppointment() {
+      // 打开链接
+      uni.setClipboardData({
+        data: "#小程序://预约挂号网/Fn6LYLkQFrelKQE",
+        success: () => {
+          uni.showToast({ title: "复制成功，请打开微信", icon: "none" });
+        },
+      });
     },
   },
 };
