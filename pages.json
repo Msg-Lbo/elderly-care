@@ -9,7 +9,6 @@
       "path": "pages/tabbar/home",
       "style": {
         "navigationBarTitleText": "首页"
-        // "navigationStyle": "custom"
       }
     },
     {

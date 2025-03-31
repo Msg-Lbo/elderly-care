@@ -18,6 +18,39 @@
         }"
       ></u-tabs>
     </section>
+    <section class="content" v-if="currentIndex === 0">
+      <view class="content-item">
+        <view class="left">
+          <view class="title">上门照护</view>
+          <view class="desc"> 喂药|看护|做饭|打扫 </view>
+        </view>
+        <view class="right">
+          <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+        </view>
+      </view>
+      <view class="content-item">
+        <view class="left">
+          <view class="title">委托代办</view>
+          <view class="desc"> 资料代取|取药|取快递|代购 </view>
+        </view>
+        <view class="right">
+          <u-image src="/static/common/l2.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+        </view>
+      </view>
+    </section>
+    <section class="content" v-if="currentIndex === 1">
+      <u-list height="80vh">
+        <view class="content-item" v-for="(item, index) in 20" :key="index">
+          <view class="left">
+            <view class="title">文章标题</view>
+            <view class="desc"> 文章介绍 </view>
+          </view>
+          <view class="right">
+            <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+          </view>
+        </view>
+      </u-list>
+    </section>
   </view>
 </template>
 
@@ -25,6 +58,7 @@
 export default {
   data() {
     return {
+      currentIndex: 0,
       list: [
         {
           name: "生活照护",
@@ -41,6 +75,7 @@ export default {
   methods: {
     handleTabClick(item) {
       console.log(item);
+      this.currentIndex = item.index;
     },
   },
 };
@@ -56,6 +91,46 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .content {
+    .content-item {
+      margin-top: 40rpx;
+      padding: 30rpx 20rpx;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10rpx;
+      background-color: #fff;
+      border-radius: 20rpx;
+      box-shadow: 10rpx 10rpx 20rpx #798860;
+      .left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        .title {
+          font-size: 56rpx;
+          color: #303133;
+          font-weight: bold;
+          margin-bottom: 10rpx;
+        }
+        .desc {
+          font-size: 36rpx;
+          color: #606266;
+          margin-bottom: 10rpx;
+        }
+        .right {
+          width: 150rpx;
+          height: 150rpx;
+          border-radius: 10rpx;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
   }
 }
 </style>
