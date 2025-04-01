@@ -31,10 +31,10 @@
         </view>
         <view class="health-manager">
           <view class="card">
-            <view class="icon">
+            <view class="icon" @click="$fn.jumpPage(`/pages/service/fileManagement`)">
               <u-image src="/static/common/c6.png" width="110rpx" height="100rpx" mode="widthFix"></u-image>
             </view>
-            <text class="card-name">档案管理</text>
+            <text class="card-name">档案查看</text>
           </view>
           <view class="line"></view>
           <view class="card" @click="$fn.jumpPage(`/pages/service/healthAgenda`)">

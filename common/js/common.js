@@ -1,4 +1,72 @@
 // 通用方法
+
+/**
+ * @description 选择位置
+ * @param {Function} callback 回调函数
+ */
+export function chooseLocation(callback) {
+  uni.chooseLocation({
+    success: (res) => {
+      console.log("获取成功", res);
+      callback(null, res);
+    },
+    fail: () => {
+      uni.getSetting({
+        success: (res) => {
+          console.log("授权成功", res);
+          var status = res.authSetting;
+          if (!status['scope.userLocation']) {
+            uni.showModal({
+              title: "是否授权当前位置",
+              content: "需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
+              success: (tip) => {
+                if (tip.confirm) {
+                  uni.openSetting({
+                    success: (data) => {
+                      if (data.authSetting['scope.userLocation'] === true) {
+                        this.toast("授权成功", "success", 1000)
+                        this.chooseLocation(callback);
+                      } else {
+                        this.toast("授权失败", "none", 1000)
+                        callback("授权失败");
+                      }
+                    }
+                  })
+                } else {
+                  callback("用户取消授权");
+                }
+              }
+            })
+          } else {
+            callback("未授权地理位置");
+          }
+        },
+        fail: (res) => {
+          console.log("获取授权信息失败", res);
+          this.toast("获取授权信息失败", "none", 1000)
+          callback("获取授权信息失败");
+        }
+      })
+    }
+  });
+}
+
+/**
+ * @description 提示
+ * @param {String} title 提示内容
+ * @param {String} icon 提示图标
+ * @param {Number} duration 提示时长
+ */
+export function toast(title, icon = 'none', duration = 1500) {
+  uni.showToast({
+    title,
+    icon,
+    duration
+  })
+}
+
+
+
 /**
  * @description 对象转url参数,只支持简单数据类型
  * @param {Object}  params 要转换成url参数的对象，例如:{a:1,b:2}

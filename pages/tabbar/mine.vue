@@ -31,10 +31,10 @@
               <text>我的卡包</text>
             </view>
           </view>
-          <view class="item">
+          <view class="item" @click="$fn.jumpPage('/pages/my/myCommission')">
             <u-image width="50" height="50" src="/static/mine/m4.png" mode="WidthFix"></u-image>
             <view class="text">
-              <text>医疗档案</text>
+              <text>我的委托</text>
             </view>
           </view>
         </view>

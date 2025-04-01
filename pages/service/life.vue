@@ -19,7 +19,7 @@
       ></u-tabs>
     </section>
     <section class="content" v-if="currentIndex === 0">
-      <view class="content-item">
+      <view class="content-item" @click="$fn.jumpPage('/pages/service/commission?type=1')">
         <view class="left">
           <view class="title">上门照护</view>
           <view class="desc"> 喂药|看护|做饭|打扫 </view>
@@ -28,7 +28,7 @@
           <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
         </view>
       </view>
-      <view class="content-item">
+      <view class="content-item" @click="$fn.jumpPage('/pages/service/commission?type=2')">
         <view class="left">
           <view class="title">委托代办</view>
           <view class="desc"> 资料代取|取药|取快递|代购 </view>

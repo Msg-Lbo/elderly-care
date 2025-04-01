@@ -2,7 +2,7 @@
   <view class="home">
     <section class="content">
       <view class="search-box">
-        <view class="search-input">
+        <view class="search-input" @click="$fn.jumpPage('/pages/service/searchList')">
           <input class="search-input-text" type="text" placeholder="足不出户预约挂号" />
           <view class="search-icon">
             <u-icon name="search" size="60rpx" color="#fff"></u-icon>
@@ -21,7 +21,7 @@
       <view class="health-box">
         <view class="health-title">
           <view>健康资讯</view>
-          <view class="more">
+          <view class="more" @click="$fn.jumpPage('/pages/service/searchList?type=health')">
             <text>全部</text>
             <u-icon name="arrow-right" size="55rpx" color="#606060"></u-icon>
           </view>

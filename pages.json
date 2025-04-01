@@ -72,10 +72,43 @@
           }
         },
         {
+          "path": "fileManagement",
+          "style": {
+            "navigationBarTitleText": "档案查看",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "searchList",
+          "style": {
+            "navigationBarTitleText": "文章列表",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "commission",
+          "style": {
+            "navigationBarTitleText": "上门服务",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
           "path": "askAQuestion",
           "style": {
             "navigationBarTitleText": "我的提问",
             "enablePullDownRefresh": false
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/my",
+      "pages": [
+        {
+          "path": "myCommission",
+          "style": {
+            "navigationBarTitleText": "我的委托",
+            "enablePullDownRefresh": true
           }
         }
       ]
