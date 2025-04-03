@@ -31,7 +31,7 @@
                     <view @click="setChecked()" class="rememberbtn">
                         <view v-if="!checked" class="checkIcon1"></view>
                         <view v-if="checked" class="checkIcon2">
-                            <image src="../../static/images/checked_icon.png" mode=""></image>
+                            <image src="/static/images/checked_icon.png" mode=""></image>
                         </view>
                         <!-- <checkbox @tap="setChecked" class="mycheck" value="1" :checked="true" /> -->
                         <view class="remember_txt"> 记住密码 </view>

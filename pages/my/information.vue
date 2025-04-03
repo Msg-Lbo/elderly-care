@@ -5,7 +5,7 @@
         <text class="text">头像</text>
         <view class="item-right">
           <image class="head" v-show="form.avatar" :src="vuex_imgUrl + form.avatar" mode="aspectFill"></image>
-          <image class="head" v-show="!form.avatar" src="../../../static/common/header-img.png"></image>
+          <image class="head" v-show="!form.avatar" src="/static/common/header-img.png"></image>
           <u-icon name="arrow-right" color="#666666" size="20rpx"></u-icon>
         </view>
       </view>
