@@ -1,288 +1,335 @@
 <template>
-	<!-- 登录 -->
-	<view>
-		<view class="tac">
-			<image class="logo" src="../../static/common/logo.png" mode=""></image>
-			<view class="tips">超 2000 家企业入驻</view>
-			<!-- 微信一键登录 -->
-			<view class="btn-box">
-				<button v-if="!isAgree" class="wx-login" @click="notAgreed">一键登录</button>
-				<button v-else-if="needWechatPhone" open-type="getPhoneNumber" class="wx-login"
-					@getphonenumber="wechatLogin">一键登录</button>
-				<button v-else class="wx-login" @click="loginSuccess(resData)">一键登录</button>
-			</view>
-			<view class="agreement-box">
-				<view class="ag-box" @click="tabAgree">
-					<image v-if="isAgree" src="/static/common/select.png" mode=""></image>
-					<image v-else src="/static/common/noSelect.png" mode=""></image>
-				</view>
-				<view class="agreement">
-					<text @click.stop="tabAgree">我已阅读并同意</text>
-					<text class="primary-color" @click.stop="jumpXy(1)">《用户协议》</text>
-					<text class="primary-color" @click.stop="jumpXy(2)">《隐私协议》</text>
-				</view>
-			</view>
-		</view>
-	</view>
+    <!-- 登录 -->
+    <view class="login-page">
+        <image class="login-bg" src="/static/common/login-bg.png"></image>
+        <!-- 图片 -->
+        <view class="topImg">
+            <image src="/static/common/logo.png" mode=""></image>
+        </view>
+        <view class="welcome_login"> 你好，欢迎登录！ </view>
+        <!-- 操作区域 -->
+        <view class="contentLogin">
+            <view class="content_info">
+                <view class="content_info_item">
+                    <input type="text" v-model="account" placeholder="请输入账号" placeholder-class="pcs" />
+                </view>
+                <view class="content_info_item">
+                    <input type="password" v-model="password" placeholder="请输入密码" placeholder-class="pcs" />
+                </view>
+                <view class="content_info_item">
+                    <input type="password" v-model="password2" placeholder="请确认密码" placeholder-class="pcs" />
+                </view>
+                <!-- <view class="content_qrcode">
+					<view class="inpqr">
+						<input type="text" v-model="verifyCode" placeholder="请输入验证码" placeholder-class="pcs" />
+					</view>
+					<view @click="getCaptchaCode()" class="qrcode_img">
+						<image :src="imgUniCode" mode=""></image>
+					</view>
+				</view> -->
+                <view class="forgetpassword">
+                    <view @click="setChecked()" class="rememberbtn">
+                        <view v-if="!checked" class="checkIcon1"></view>
+                        <view v-if="checked" class="checkIcon2">
+                            <image src="../../static/images/checked_icon.png" mode=""></image>
+                        </view>
+                        <!-- <checkbox @tap="setChecked" class="mycheck" value="1" :checked="true" /> -->
+                        <view class="remember_txt"> 记住密码 </view>
+                    </view>
+                    <view class="forgetpassword_rtxt"> 忘记密码请联系管理员 </view>
+                </view>
+                <view @click="debounce()" class="btn_sub"> 登录 </view>
+                <view @click="debounce()" class="btn_sub register"> 注册 </view>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				tipsShow: false,
-				resData: {},
-				isAgree: false, //是否同意协议
-				needWechatPhone: false //是否需要微信手机号授权
-			};
-		},
-		onLoad() {
-			this.creatLogin();
-		},
-		methods: {
-			// 跳转协议
-			jumpXy(e) {
-				uni.navigateTo({
-					url: '/pages/tabbar/agreement?type=' + e
-				})
-			},
-			// 同意/不同意协议
-			tabAgree() {
-				this.isAgree = !this.isAgree;
-			},
-			// 初始登录获取openid
-			creatLogin() {
-				uni.showLoading({
-					title: '登录中...',
-					mask: true
-				})
-				const that = this;
-				uni.login({
-					provider: "weixin", //使用微信登录
-					success: async (loginRes) => {
-						try {
-							let res = await this.$api.wechatLogin({
-								code: loginRes.code
-							}, {
-								custom: {
-									catch: true,
-									toast: false
-								}
-							})
-							console.log('初始登录res', res);
-							this.resData = res.data
-							this.needWechatPhone = res.data.needWechatPhone
-							uni.hideLoading()
-						} catch (e) {
-							//TODO handle the exception
-							console.log('e', e);
-							if (e.code == 500) {
-								uni.showToast({
-									title: e.msg,
-									icon: 'none'
-								})
-							} else {
-								this.tipsShow = true
-							}
-							uni.hideLoading()
-						}
+import { $_getCaptchaCode, $_login } from "@/api/http.api.js";
+export default {
+    data() {
+        return {
+            checked: false,
+            imgUniCode: "",
+            verifyKey: "",
+            account: "",
+            password: "",
+            verifyCode: "",
+            noClick: true,
+        };
+    },
+    onLoad() {
+        // this.getCaptchaCode()
+    },
+    onShow() {
+        if (uni.getStorageSync("account") && uni.getStorageSync("password")) {
+            this.account = uni.getStorageSync("account");
+            this.password = uni.getStorageSync("password");
+        }
+        if (uni.getStorageSync("isMiss")) {
+            this.checked = true;
+        }
+    },
+    methods: {
+        setChecked() {
+            this.checked = !this.checked;
+        },
+        // 获取图形验证码
+        async getCaptchaCode() {
+            let res = await this.$api.$_getCaptchaCode();
+            console.log(res);
+            if (res.code == 200) {
+                this.imgUniCode = `data:image/png;base64,${res.data.img}`;
+                this.verifyKey = res.data.key;
+            } else {
+                uni.showToast({
+                    title: res.msg,
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+        },
+        // 检查是否有密码
+        reviewPass() {
+            let account = uni.getStorageSync("account");
+            let password = uni.getStorageSync("password");
+            if (account && password) {
+                this.account = account;
+                this.password = password;
+            }
+        },
+        // 非空校验
+        noNullValidation() {
+            if (!this.account) {
+                return uni.showToast({
+                    title: "请输入账号",
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+            if (!this.password) {
+                return uni.showToast({
+                    title: "请输入密码",
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+            // if (!this.verifyCode) {
+            // 	return uni.showToast({
+            // 		title: '请输入验证码',
+            // 		icon: 'none',
+            // 		duration: 2000
+            // 	});
+            // }
+            this.login();
+        },
 
-					},
-				});
-			},
-			// 未同意协议
-			notAgreed() {
-				uni.showToast({
-					title: '请先同意用户协议',
-					icon: 'none',
-					duration: 2000,
-				})
-			},
-			// 微信一键登录
-			async wechatLogin(e) {
-				if (!this.isAgree) {
-					return uni.showToast({
-						title: "请先查看并同意协议",
-						icon: "none",
-						duration: 2000,
-					});
-				}
-				if (e.detail.errMsg == "getPhoneNumber:fail user deny") {
-					uni.showToast({
-						title: "用户拒绝授权",
-						icon: "none",
-						duration: 2000,
-					});
-					return;
-				}
-				console.log('e', e);
-				let res = await this.$api.phoneWechatLogin({
-					code: e.detail.code,
-					openid: resData.openid,
-				})
-				if (res.code == 200) {
-					this.loginSuccess(res)
-				}
+        debounce() {
+            let that = this;
+            if (that.noClick) {
+                // 第一次点击
+                that.noClick = false;
+                that.noNullValidation();
+                setTimeout(() => {
+                    that.noClick = true;
+                }, 2000);
+            } else {
+                // 这里是重复点击的判断
+                console.log("请稍后点击");
+            }
+        },
 
-			},
-			// 登录成功
-			async loginSuccess(resData) {
-				// uni.hideLoading()
-				uni.showToast({
-					title: "登录成功！",
-					icon: "none",
-					duration: 2000,
-				});
-				console.log('resData', resData);
-				this.$u.vuex("vuex_token", resData.accessToken);
-				uni.setStorageSync("token", resData.accessToken);
-				uni.setStorageSync("userInfo", resData.detail);
-				let url = "/pages/my/pages/selectType";
-				setTimeout(() => {
-					uni.reLaunch({
-						url,
-					});
-				}, 500);
-				this.showLogin = false;
-			},
-		}
-	}
+        // 登录
+        async login() {
+            let data = {
+                account: this.account,
+                password: this.password,
+                /* verifyCode: this.verifyCode,
+					verifyKey: this.verifyKey */
+            };
+            console.log(data, "参数");
+            let res = await this.$api.$_login({
+                account: this.account,
+                password: this.password,
+                // verifyCode: this.verifyCode,
+                // verifyKey: this.verifyKey
+            });
+            if (res.code == 200) {
+                console.log(res);
+                // DETACHMENT_LEADER    支队长
+                // DEPUTY_DETACHMENT_LEADER   副支队长
+                // OFFICE    科室负责人
+                // NORMAL   普通用户
+                uni.showToast({
+                    title: "登录成功！",
+                    icon: "none",
+                    duration: 2000,
+                });
+                console.log(res, "990000");
+                if (this.checked) {
+                    uni.setStorageSync("account", this.account);
+                    uni.setStorageSync("password", this.password);
+                    uni.setStorageSync("isMiss", this.checked);
+                } else {
+                    // 如果用户未勾选“记住我”，清除本地存储中的用户名和密码
+                    uni.removeStorageSync("account");
+                    uni.removeStorageSync("password");
+                    uni.removeStorageSync("isMiss");
+                }
+                this.$u.vuex("vuex_token", res.data.accessToken);
+                uni.setStorageSync("token", res.data.accessToken);
+                uni.setStorageSync("user", res.data.detail);
+
+                let url = "/pages/tabbar/home";
+                setTimeout(() => {
+                    if (url) {
+                        uni.navigateTo({
+                            url: url,
+                        });
+                    }
+                }, 500);
+            } else {
+                uni.showToast({
+                    title: res.msg,
+                    icon: "none",
+                    duration: 2000,
+                });
+            }
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
-	.tac {
-		text-align: center;
-	}
+.login-page {
+    .login-bg {
+        position: fixed;
+        top: -40rpx;
+        left: 0;
+		right: 0;
+		bottom: 0;
+        width: 120%;
+        height: 130%;
+		z-index: -1;
+		transform: translateX(-10%);
+    }
+}
+.topBg {
+    /deep/.nav {
+        font-weight: bold;
+    }
+}
 
-	.btn-box {
-		display: flex;
-		justify-content: center;
-	}
+.topImg {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 136rpx;
+    // height: 540rpx;
+    box-sizing: border-box;
 
-	.logo {
-		margin-top: 180rpx;
-		text-align: center;
-		width: 320rpx;
-		height: 360rpx;
-	}
+    image {
+        width: 240rpx;
+        height: 240rpx;
+    }
+}
 
-	.title {
-		margin-top: 56rpx;
-		font-size: 48rpx;
-		font-weight: bold;
-		color: #020D1A;
-	}
+.welcome_login {
+    width: 100%;
+    padding-top: 48rpx;
+    font-size: 40rpx;
+    display: flex;
+    justify-content: center;
+    color: #000;
+}
 
-	.tips {
-		font-size: 40rpx;
-		color: #4591FE;
-		margin-top: 80rpx;
-	}
+.contentLogin {
+    width: 100%;
+    padding: 0 80rpx;
+    box-sizing: border-box;
 
-	.wx-login {
-		margin-top: 120rpx;
-		width: 480rpx;
-		height: 96rpx;
-		background: #404A87;
-		border-radius: 48rpx;
-		font-size: 36rpx;
-		color: #FFFFFF;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+    .content_info {
+        padding-top: 64rpx;
+        box-sizing: border-box;
 
-		.weixin {
-			width: 48rpx;
-			height: 46rpx;
-			margin-right: 12rpx;
-		}
-	}
+        .content_info_item {
+            width: 100%;
+            height: 80rpx !important;
+            background-color: #f7f7f7;
+            border-radius: 12rpx;
+            display: flex;
+            align-items: center;
+            padding-left: 28rpx;
+            box-sizing: border-box;
+            margin-bottom: 48rpx;
+        }
 
-	.ple-login {
-		padding: 40rpx 0rpx 85rpx;
-		text-align: left;
+        .forgetpassword {
+            margin-top: 24rpx;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-		.inp-box {
-			padding: 60rpx 0rpx 30rpx;
-			margin: 0 70rpx;
-			border-bottom: 1rpx solid #D8DEE6;
-			position: relative;
+            .rememberbtn {
+                display: flex;
+                align-items: center;
 
-			.phe-icon {
-				position: absolute;
-				top: 66rpx;
-				left: 0;
-				width: 28rpx;
-				height: 28rpx;
-			}
+                .checkIcon1 {
+                    width: 24rpx;
+                    height: 24rpx;
+                    background-color: #f7f7f7;
+                    border: 1rpx solid #f7f7f7;
+                }
 
-			input {
-				padding-left: 60rpx;
-			}
+                .checkIcon2 {
+                    width: 24rpx;
+                    height: 24rpx;
+                    border: 1rpx solid #f7f7f7;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #2d6cb3;
 
-		}
+                    image {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
 
-		.login {
-			margin-top: 100rpx;
-			width: 640rpx;
-			height: 96rpx;
-			background: #04C15F;
-			border-radius: 20rpx;
-			color: #fff;
-			font-size: 36rpx;
-			font-weight: bold;
-			color: #FFFFFF;
+                .remember_txt {
+                    font-size: 24rpx;
+                    margin-left: 16rpx;
+                    color: #191919;
+                }
+            }
 
-			&.unsatisfied {
-				background: #E3E3E3;
-				color: #9DA0A5;
-			}
-		}
+            .forgetpassword_rtxt {
+                color: #191919;
+                font-size: 24rpx;
+            }
+        }
 
-		.tab {
-			margin-bottom: 75rpx;
-		}
-	}
+        .btn_sub {
+            width: 100%;
+            margin-top: 58rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #a6cf6f;
+            height: 96rpx;
+            border-radius: 50rpx;
+            color: #fff;
+            font-size: 36rpx;
+        }
+        .register {
+            background-color: #2d6cb3;
+        }
+    }
 
-	.tab {
-		margin-top: 40rpx;
-		margin-bottom: 500rpx;
-		text-align: center;
-		font-size: 28rpx;
-		color: #888990;
-	}
-
-	.agreement-box {
-		position: fixed;
-		bottom: 10%;
-		left: 50%;
-		transform: translateX(-50%);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-
-		.ag-box {
-			width: 50rpx;
-			height: 50rpx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		image {
-			width: 24rpx;
-			height: 24rpx;
-		}
-
-		.agreement {
-			font-size: 28rpx;
-			font-weight: 500;
-			color: #666666;
-
-			.primary-color {
-				color: #4591FE;
-			}
-		}
-	}
+    .pcs {
+        font-size: 28rpx;
+        color: #8c9299;
+    }
+}
 </style>

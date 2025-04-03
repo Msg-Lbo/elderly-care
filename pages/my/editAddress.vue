@@ -30,7 +30,7 @@
 			<div class="btn cancel" @click="defaultBtn">设为默认地址</div>
 			<div class="btn w330" @click="saveBtn">保存</div>
 		</view>
-
+		
 		<!-- 地区选择器 -->
 		<!-- 选择地区 -->
 		<!-- <u-picker :show="showArea" ref="uPicker" :columns="areaList" keyName="name" @confirm="areaConfirm"

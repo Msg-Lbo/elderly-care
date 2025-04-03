@@ -1,152 +1,178 @@
 {
-  "easycom": {
-    "^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue",
-    "^c-(.*)": "@/components/c-$1/c-$1.vue"
-  },
-  "pages": [
-    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    {
-      "path": "pages/tabbar/home",
-      "style": {
-        "navigationBarTitleText": "首页"
-      }
+    "easycom": {
+        "^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue",
+        "^c-(.*)": "@/components/c-$1/c-$1.vue"
     },
-    {
-      "path": "pages/tabbar/sos",
-      "style": {
-        "navigationBarTitleText": "紧急呼救"
-        // "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/tabbar/mine",
-      "style": {
-        "navigationBarTitleText": "个人中心"
-        // "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/tabbar/login",
-      "style": {
-        "navigationBarTitleText": "登录"
-      }
-    },
-    {
-      "path": "pages/tabbar/agreement",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
-      }
-    }
-  ],
-  "subPackages": [
-    {
-      "root": "pages/service",
-      "pages": [
+    "pages": [
+        //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
         {
-          "path": "medical",
+          "path": "pages/tabbar/login",
           "style": {
-            "navigationBarTitleText": "医疗服务",
-            "enablePullDownRefresh": false
+              "navigationBarTitleText": "登录",
+              "navigationStyle": "custom"
           }
-        },
-        {
-          "path": "life",
-          "style": {
-            "navigationBarTitleText": "生活服务",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "healthAgenda",
-          "style": {
-            "navigationBarTitleText": "健康日程",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "addAgenda",
-          "style": {
-            "navigationBarTitleText": "新增日程",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "fileManagement",
-          "style": {
-            "navigationBarTitleText": "档案查看",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "searchList",
-          "style": {
-            "navigationBarTitleText": "文章列表",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "commission",
-          "style": {
-            "navigationBarTitleText": "上门服务",
-            "enablePullDownRefresh": false
-          }
-        },
-        {
-          "path": "askAQuestion",
-          "style": {
-            "navigationBarTitleText": "我的提问",
-            "enablePullDownRefresh": false
-          }
-        }
-      ]
-    },
-    {
-      "root": "pages/my",
-      "pages": [
-        {
-          "path": "myCommission",
-          "style": {
-            "navigationBarTitleText": "我的委托",
-            "enablePullDownRefresh": true
-          }
-        }
-      ]
-    }
-  ],
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
-  },
-  "uniIdRouter": {},
-  // 不需要导航栏的话就删除
-  "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#54A4FF",
-    "backgroundColor": "#FFFFFF",
-    "borderStyle": "black",
-    // list里面写图标和文字
-    "list": [
-      {
-        "selectedIconPath": "/static/tabbar/home-a.png",
-        "iconPath": "/static/tabbar/home.png",
-        "pagePath": "pages/tabbar/home",
-        "text": "首页"
       },
-      {
-        "selectedIconPath": "/static/tabbar/example-a.png",
-        "iconPath": "/static/tabbar/example.png",
-        "pagePath": "pages/tabbar/sos",
-        "text": "紧急呼救"
-      },
-      {
-        "selectedIconPath": "/static/tabbar/mine-a.png",
-        "iconPath": "/static/tabbar/mine.png",
-        "pagePath": "pages/tabbar/mine",
-        "text": "我的"
-      }
-    ]
-  }
+        {
+            "path": "pages/tabbar/start",
+            "style": {
+                "navigationBarTitleText": "开始",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/tabbar/home",
+            "style": {
+                "navigationBarTitleText": "首页"
+            }
+        },
+        {
+            "path": "pages/tabbar/sos",
+            "style": {
+                "navigationBarTitleText": "紧急呼救"
+                // "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/tabbar/mine",
+            "style": {
+                "navigationBarTitleText": "个人中心"
+                // "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/tabbar/agreement",
+            "style": {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+        }
+    ],
+    "subPackages": [
+        {
+            "root": "pages/service",
+            "pages": [
+                {
+                    "path": "medical",
+                    "style": {
+                        "navigationBarTitleText": "医疗服务",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "life",
+                    "style": {
+                        "navigationBarTitleText": "生活服务",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "healthAgenda",
+                    "style": {
+                        "navigationBarTitleText": "健康日程",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "addAgenda",
+                    "style": {
+                        "navigationBarTitleText": "新增日程",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "fileManagement",
+                    "style": {
+                        "navigationBarTitleText": "档案查看",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "searchList",
+                    "style": {
+                        "navigationBarTitleText": "文章列表",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "commission",
+                    "style": {
+                        "navigationBarTitleText": "上门服务",
+                        "enablePullDownRefresh": false
+                    }
+                },
+                {
+                    "path": "askAQuestion",
+                    "style": {
+                        "navigationBarTitleText": "我的提问",
+                        "enablePullDownRefresh": false
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/my",
+            "pages": [
+                {
+                    "path": "myCommission",
+                    "style": {
+                        "navigationBarTitleText": "我的委托",
+                        "enablePullDownRefresh": true
+                    }
+                },
+                {
+                    "path": "information",
+                    "style": {
+                        "navigationBarTitleText": "个人信息"
+                    }
+                },
+                {
+                    "path": "myCard",
+                    "style": {
+                        "navigationBarTitleText": "我的卡包"
+                    }
+                },
+                {
+                    "path": "addGuardian",
+                    "style": {
+                        "navigationBarTitleText": "添加监护人"
+                    }
+                }
+            ]
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "uni-app",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "uniIdRouter": {},
+    // 不需要导航栏的话就删除
+    "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#54A4FF",
+        "backgroundColor": "#FFFFFF",
+        "borderStyle": "black",
+        // list里面写图标和文字
+        "list": [
+            {
+                "selectedIconPath": "/static/tabbar/home-a.png",
+                "iconPath": "/static/tabbar/home.png",
+                "pagePath": "pages/tabbar/home",
+                "text": "首页"
+            },
+            {
+                "selectedIconPath": "/static/tabbar/example-a.png",
+                "iconPath": "/static/tabbar/example.png",
+                "pagePath": "pages/tabbar/sos",
+                "text": "紧急呼救"
+            },
+            {
+                "selectedIconPath": "/static/tabbar/mine-a.png",
+                "iconPath": "/static/tabbar/mine.png",
+                "pagePath": "pages/tabbar/mine",
+                "text": "我的"
+            }
+        ]
+    }
 }

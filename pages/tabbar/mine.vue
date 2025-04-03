@@ -1,16 +1,16 @@
 <template>
   <view class="mine">
     <section class="content">
-      <view class="user">
+      <view class="user" @click="$fn.jumpPage('/pages/my/information')">
         <view class="left">
-          <u-image src="/static/mine/m1.png" width="120" height="120" mode="aspectFill"></u-image>
+          <u-image :src="userInfo.avatar" width="120" height="120" mode="aspectFill"></u-image>
         </view>
         <view class="right">
           <view class="name">
-            <text>张三</text>
+            <text>{{ userInfo.name }}</text>
           </view>
           <view class="account">
-            <text>账号：13800138000</text>
+            <text>账号：{{ userInfo.phone }}</text>
           </view>
         </view>
       </view>
@@ -19,13 +19,13 @@
           <view class="left">工具与服务</view>
         </view>
         <view class="list">
-          <view class="item">
+          <view class="item" @click="$fn.jumpPage('/pages/service/fileManagement')">
             <u-image width="50" height="50" src="/static/mine/m2.png" mode="WidthFix"></u-image>
             <view class="text">
               <text>个人档案</text>
             </view>
           </view>
-          <view class="item">
+          <view class="item" @click="$fn.jumpPage('/pages/my/myCard')">
             <u-image width="50" height="50" src="/static/mine/m3.png" mode="WidthFix"></u-image>
             <view class="text">
               <text>我的卡包</text>
@@ -44,7 +44,7 @@
           <view class="left">监护设置</view>
         </view>
         <view class="list">
-          <view class="item">
+          <view class="item" @click="$fn.jumpPage('/pages/my/addGuardian')">
             <u-image width="70" height="70" src="/static/mine/m7.png" mode="aspectFill"></u-image>
             <view class="text">
               <text>添加监护人</text>
@@ -59,7 +59,13 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      userInfo: {
+        name: "张三",
+        phone: "13800138000",
+        avatar: "/static/mine/m1.png",
+      },
+    };
   },
   methods: {},
 };
