@@ -5,25 +5,29 @@
     </section>
     <section class="content">
       <u-list height="90vh">
-        <view v-for="(item, index) in 5" :key="index" class="item">
+        <view v-for="(item, index) in commissionList" :key="index" class="item">
           <view class="title">
-            <text>委托编号：WT20250307084340769</text>
-            <text style="color: #00693a">已完成</text>
+            <text>委托编号：{{ item.id }}</text>
+            <text style="color: #00693a">{{ item.status }}</text>
           </view>
           <u-line></u-line>
           <view class="item-content">
+<<<<<<< HEAD
             <view class="name"> 指定超市买药 </view>
+=======
+            <view class="name">{{ item.title }}</view>
+>>>>>>> 5a8d6cd50aa11f0a40fd3ab9c784604ea6accf19
             <view class="info-item">
               <view class="label">员工姓名：</view>
               <view class="value">张三三</view>
             </view>
             <view class="info-item">
               <view class="label">委托类型：</view>
-              <view class="value">买药</view>
+              <view class="value">{{ item.type }}</view>
             </view>
             <view class="info-item">
               <view class="label">委托备注：</view>
-              <view class="value">123123123123123</view>
+              <view class="value">{{ item.remark }}</view>
             </view>
           </view>
           <u-line></u-line>
@@ -64,6 +68,15 @@ export default {
         {
           value: "已取消",
           key: 4,
+        },
+      ],
+      commissionList: [
+        {
+          id: 1,
+          title: "福安市湾坞中学新校区建设项目一期工程",
+          status: "已完成",
+          type: "买药",
+          remark: "123123123123123",
         },
       ],
     };

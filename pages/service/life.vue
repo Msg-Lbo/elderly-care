@@ -40,10 +40,23 @@
     </section>
     <section class="content" v-if="currentIndex === 1">
       <u-list height="80vh">
-        <view class="content-item" v-for="(item, index) in 20" :key="index">
+        <view class="content-item" v-for="(item, index) in aricleList" :key="index"  @click="$fn.jumpPage('/pages/tabbar/agreement')">
           <view class="left">
-            <view class="title">文章标题</view>
-            <view class="desc"> 文章介绍 </view>
+            <view class="title">{{ item.title }}</view>
+            <view class="desc"> {{ item.desc }} </view>
+          </view>
+          <view class="right">
+            <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+          </view>
+        </view>
+      </u-list>
+    </section>
+    <section class="content" v-if="currentIndex === 2">
+      <u-list height="80vh">
+        <view class="content-item" v-for="(item, index) in aricleList" :key="index"  @click="$fn.jumpPage('/pages/tabbar/agreement')">
+          <view class="left">
+            <view class="title">{{ item.title }}</view>
+            <view class="desc"> {{ item.desc }} </view>
           </view>
           <view class="right">
             <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
@@ -70,7 +83,16 @@ export default {
           name: "健康百科",
         },
       ],
+<<<<<<< HEAD
       articleList:[]
+=======
+      aricleList: [
+        {
+          title: "文章标题",
+          desc: "文章介绍",
+        },
+      ],
+>>>>>>> 5a8d6cd50aa11f0a40fd3ab9c784604ea6accf19
     };
   },
   onShow(){

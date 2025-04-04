@@ -18,8 +18,8 @@
             <u-image src="https://picsum.photos/100/100" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
           </view>
           <view class="user-desc">
-            <view class="user-name">张三</view>
-            <view class="user-phone">13812345678</view>
+            <view class="user-name">{{ userInfo.name }}</view>
+            <view class="user-phone">{{ userInfo.phone }}</view>
           </view>
           <view class="qr-code">
             <u-image src="/static/common/qr-code.png" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
@@ -27,7 +27,7 @@
         </view>
         <view class="health-id">
           <text style="color: #606060">电子健康卡</text>
-          <text style="color: #a3a3a3">[123456789012345678]</text>
+          <text style="color: #a3a3a3">[{{ userInfo.healthId }}]</text>
         </view>
         <view class="health-manager">
           <view class="card">
@@ -96,6 +96,11 @@ export default {
   data() {
     return {
       activeTab: 1,
+      userInfo: {
+        name: "张三",
+        phone: "13800138000",
+        healthId: "123456789012345678",
+      },
       tabs: [
         { label: "诊疗服务", value: 1, bgColor: "#A6CF6F" },
         { label: "健康监测", value: 2, bgColor: "#F1E779" },

@@ -27,7 +27,7 @@
           </view>
         </view>
         <u-scroll-list>
-          <view class="health-item" v-for="(item, index) in healthList" :key="index">
+          <view class="health-item" v-for="(item, index) in healthList" :key="index" @click="$fn.jumpPage('/pages/tabbar/agreement')">
             <view class="health-cover">
               <u-image :src="item.cover + index" width="450rpx" height="760rpx" mode="aspectFill"></u-image>
             </view>
@@ -69,20 +69,17 @@ export default {
         {
           cover: "https://picsum.photos/450/760/?random",
           title: "疾病预防",
-          desc: "了解疾病预防的知识，减少疾病发病率",
-          path: "/pages/health/prevent",
+          desc: "了解疾病预防的知识，减少疾病发病率"
         },
         {
           cover: "https://picsum.photos/450/760/?random",
           title: "健康饮食",
-          desc: "了解健康饮食的原理，保障健康饮食的关键",
-          path: "/pages/health/food",
+          desc: "了解健康饮食的原理，保障健康饮食的关键"
         },
         {
           cover: "https://picsum.photos/450/760/?random",
           title: "养生保健",
-          desc: "了解养生保健的原理，保障养生保健的关键",
-          path: "/pages/health/health",
+          desc: "了解养生保健的原理，保障养生保健的关键"
         },
       ],
     };
