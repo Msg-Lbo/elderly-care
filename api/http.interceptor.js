@@ -1,21 +1,3 @@
-// 引入加密js
-import {
-	sm4
-} from "sm-crypto"
-
-// 响应参数解密的key值，应与后端加密key保持完全一致
-const key = "e49a515a1cec7a1cf2340f3abe8f7001"
-
-const toByteArr = (str) => {
-	const byteArray = new Uint8Array(str.length / 2)
-	for (let i = 0; i < byteArray.length; i++) {
-		const index = i * 2
-		const byteString = str.substring(index, index + 2)
-		byteArray[i] = parseInt(byteString, 16)
-	}
-	return byteArray
-}
-
 // 此vm参数为页面的实例，可以通过它引用vuex中的变量
 module.exports = (vm) => {
 	// 初始化请求配置
@@ -35,32 +17,8 @@ module.exports = (vm) => {
 		// 可以在此通过vm引用vuex中的变量，具体值在vm.$store.state中
 		config.header = {
 			'Authorization':'Bearer '+ vm.$store.state.vuex_token,
-			"login-platform": "MINI_PROGRAM",
+			"login-platform": "MINI_PROGRAM"
 		};
-		if (vm.vuex_encipher) {
-			if (config.method.toLowerCase() === "post" || config.method.toLowerCase() === "put") {
-				try {
-					// 请求参数加密
-					const encryptData = sm4.encrypt(
-						JSON.stringify(config.data),
-						toByteArr(key)
-					)
-					config.data = {
-						text: encryptData
-					}
-				} catch (e) {
-					//
-				}
-				const requestObj = {
-					url: config.url,
-					data: typeof config.data === "object" ?
-						JSON.stringify(config.data) : config.data,
-					time: new Date().getTime()
-				}
-			}
-		}
-
-		// }
 		return config
 	}, config => { // 可使用async await 做异步操作
 		return Promise.reject(config)
@@ -107,29 +65,6 @@ module.exports = (vm) => {
 				return new Promise(() => {})
 			}
 		}
-		if (vm.vuex_encipher) {
-			try {
-				if (typeof data.data === "string") {
-					let decryptedData = sm4.decrypt(
-						toByteArr(data.data),
-						toByteArr(key)
-					)
-					if (
-						decryptedData.charAt(0) === "[" ||
-						decryptedData.charAt(0) === "{"
-					) {
-						decryptedData = JSON.parse(decryptedData)
-					}
-					return {
-						...data,
-						data: decryptedData
-					}
-				}
-			} catch (e) {
-				return data
-			}
-		}
-
 		return data
 		// return data.data === undefined ? {} : data.data
 	}, (response) => {

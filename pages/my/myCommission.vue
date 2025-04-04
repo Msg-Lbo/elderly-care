@@ -12,7 +12,7 @@
           </view>
           <u-line></u-line>
           <view class="item-content">
-            <view class="name"> 福安市湾坞中学新校区建设项目一期工程 </view>
+            <view class="name"> 指定超市买药 </view>
             <view class="info-item">
               <view class="label">员工姓名：</view>
               <view class="value">张三三</view>

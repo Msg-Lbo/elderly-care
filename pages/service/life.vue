@@ -70,12 +70,30 @@ export default {
           name: "健康百科",
         },
       ],
+      articleList:[]
     };
+  },
+  onShow(){
+    console.log(12312);
+    
+    this.getArticleList();
   },
   methods: {
     handleTabClick(item) {
       console.log(item);
       this.currentIndex = item.index;
+    },
+
+    // 获取文章列表
+   async getArticleList() {
+      try {
+        const res = await this.$api.getArticles();
+        console.log(res);
+
+      } catch (error) {
+        console.log(error);
+        
+      }
     },
   },
 };
