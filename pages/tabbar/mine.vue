@@ -55,14 +55,14 @@
           </view>
         </view>
         <!-- 监护人列表 -->
-        <view class="guardian-list" v-if="userInfo.guardians && userInfo.guardians.length > 0">
-          <view class="guardian-item" v-for="item in userInfo.guardians" :key="item.id">
+        <view class="guardian-list" v-if="userInfo.wards && userInfo.wards.length > 0">
+          <view class="guardian-item" v-for="item in userInfo.wards" :key="item.id">
             <view class="guardian-info">
-              <u-image :src="vuex_imgUrl + item.guardian.avatar" width="80" height="80" mode="aspectFill" shape="circle"></u-image>
+              <u-image :src="vuex_imgUrl + item.ward_avatar" width="80" height="80" mode="aspectFill" shape="circle"></u-image>
               <view class="guardian-detail">
-                <view class="guardian-name">{{ item.guardian.nickname }}</view>
+                <view class="guardian-name">{{ item.ward_nickname }}</view>
                 <view class="guardian-relation">关系：{{ item.relationship }}</view>
-                <view class="guardian-phone">电话：{{ item.guardian.phone }}</view>
+                <view class="guardian-phone">电话：{{ item.ward_phone }}</view>
               </view>
             </view>
           </view>

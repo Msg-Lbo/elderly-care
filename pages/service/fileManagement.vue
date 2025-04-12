@@ -2,7 +2,7 @@
   <view class="file-management">
     <section class="content">
       <u-list>
-        <view class="list">
+        <view class="list" v-if="list.length > 0">
           <view class="item" v-for="item in list" :key="item.id" @click="$fn.jumpPage(`/pages/service/fileDetail?id=${item.id}`)">
             <view class="left">
               <view class="title">{{ item.title }}</view>
@@ -12,6 +12,9 @@
               <u-icon name="arrow-right"></u-icon>
             </view>
           </view>
+        </view>
+        <view class="empty-tip" v-else>
+          <u-empty text="当前无个人档案" mode="list"></u-empty>
         </view>
       </u-list>
     </section>
@@ -48,6 +51,7 @@ export default {
   .content {
     padding: 24rpx;
     background-color: #f7f7f7;
+    min-height: 100vh;
     .list {
       display: flex;
       flex-direction: column;
@@ -69,6 +73,9 @@ export default {
           margin-top: 16rpx;
         }
       }
+    }
+    .empty-tip {
+      padding-top: 200rpx;
     }
   }
   .btns {
