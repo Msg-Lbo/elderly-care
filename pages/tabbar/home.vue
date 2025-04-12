@@ -27,9 +27,14 @@
           </view>
         </view>
         <u-scroll-list>
-          <view class="health-item" v-for="(item, index) in healthList" :key="index" @click="$fn.jumpPage('/pages/tabbar/agreement')">
+          <view
+            class="health-item"
+            v-for="(item, index) in healthList"
+            :key="index"
+            @click="$fn.jumpPage('/pages/tabbar/articleDetail?id=' + item.id)"
+          >
             <view class="health-cover">
-              <u-image :src="item.cover + index" width="450rpx" height="760rpx" mode="aspectFill"></u-image>
+              <u-image :src="img_url + item.cover" width="450rpx" height="760rpx" mode="aspectFill"></u-image>
             </view>
           </view>
         </u-scroll-list>
@@ -42,6 +47,7 @@
 export default {
   data() {
     return {
+      img_url: "http://127.0.0.1:8000",
       value1: 0,
       classifyList: [
         {
@@ -54,39 +60,29 @@ export default {
           title: "生活服务",
           path: "/pages/service/life",
         },
-        // {
-        // 	icon: '/static/common/c3.png',
-        // 	title: '社交娱乐',
-        // 	path: '/pages/service/social'
-        // },
-        // {
-        // 	icon: '/static/common/c4.png',
-        // 	title: '线上服务',
-        // 	path: '/pages/service/online'
-        // }
+        {
+          icon: "/static/common/c3.png",
+          title: "文章",
+          path: "/pages/service/articles",
+        },
+        {
+        	icon: '/static/common/c4.png',
+        	title: '社区活动  ',
+        	path: '/pages/service/activity'
+        }
       ],
-      healthList: [
-        {
-          cover: "https://picsum.photos/450/760/?random",
-          title: "疾病预防",
-          desc: "了解疾病预防的知识，减少疾病发病率"
-        },
-        {
-          cover: "https://picsum.photos/450/760/?random",
-          title: "健康饮食",
-          desc: "了解健康饮食的原理，保障健康饮食的关键"
-        },
-        {
-          cover: "https://picsum.photos/450/760/?random",
-          title: "养生保健",
-          desc: "了解养生保健的原理，保障养生保健的关键"
-        },
-      ],
+      healthList: [],
     };
   },
   onShow() {
+    this.handleGetArticleListByHot();
   },
   methods: {
+    handleGetArticleListByHot() {
+      this.$api.getArticlesByHot().then((res) => {
+        this.healthList = res.data;
+      });
+    },
   },
 };
 </script>

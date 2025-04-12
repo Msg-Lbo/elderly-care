@@ -16,9 +16,11 @@ module.exports = (vm) => {
 		// if(config?.custom?.auth) {
 		// 可以在此通过vm引用vuex中的变量，具体值在vm.$store.state中
 		config.header = {
-			'Authorization':'Bearer '+ vm.$store.state.vuex_token,
+			'Authorization': 'Bearer ' + uni.getStorageSync('token'),
 			"login-platform": "MINI_PROGRAM"
 		};
+		console.log("请求参数", config.data);
+
 		return config
 	}, config => { // 可使用async await 做异步操作
 		return Promise.reject(config)
@@ -28,6 +30,7 @@ module.exports = (vm) => {
 	uni.$u.http.interceptors.response.use((response) => {
 		/* 对响应成功做点什么 可使用async await 做异步操作*/
 		const data = response.data
+		console.log("响应数据", data);
 
 		// 自定义参数
 		const custom = response.config?.custom
@@ -42,7 +45,7 @@ module.exports = (vm) => {
 					icon: "none",
 					duration: 2000,
 				});
-				setTimeout(function() {
+				setTimeout(function () {
 					uni.reLaunch({
 						url: "/pages/tabbar/login",
 						fail(error) {
@@ -53,8 +56,9 @@ module.exports = (vm) => {
 			}, 2000);
 		} else if (data.code !== 200) {
 			// 如果没有显式定义custom的toast参数为false的话，默认对报错进行toast弹出提示
+
 			if (custom.toast !== false) {
-				uni.$u.toast(data.msg)
+				uni.$u.toast(data.message)
 			}
 
 			// 如果需要catch返回，则进行reject
@@ -62,13 +66,37 @@ module.exports = (vm) => {
 				return Promise.reject(data)
 			} else {
 				// 否则返回一个pending中的promise，请求不会进入catch中
-				return new Promise(() => {})
+				return new Promise(() => { })
 			}
 		}
 		return data
 		// return data.data === undefined ? {} : data.data
 	}, (response) => {
 		// 对响应错误做点什么 （statusCode !== 200）
+		console.log("错误响应数据", response);
+		console.log(response.data.message == null);
+		console.log(response.data.message == null ? response.data.detail : response.data.message)
+		uni.showToast({
+			title: response.data.message == null ? response.data.detail : response.data.message,
+			icon: "none",
+			duration: 2000,
+		});
+		if (response.statusCode == 401) {
+			uni.clearStorageSync()
+			uni.showToast({
+				title: "登录已过期，请重新登录",
+				icon: "none",
+				duration: 2000,
+			});
+			setTimeout(function () {
+				uni.reLaunch({
+					url: "/pages/tabbar/login",
+					fail(error) {
+						console.log(error);
+					},
+				});
+			}, 1000);
+		}
 		return Promise.reject(response)
 	})
 }

@@ -13,30 +13,34 @@
       <view class="items item">
         <text class="text">昵称</text>
         <view class="item-right">
-          <input class="ipt" v-model="form.name" placeholder="请输入" />
+          <input class="ipt" v-model="form.nickname" placeholder="请输入" />
         </view>
       </view>
-      <view class="items item" @click="selectSex">
-        <text class="text">性别</text>
+      <view class="items item">
+        <text class="text">账号</text>
         <view class="item-right">
-          <view class="ipt">
-            {{ form.sex == 0 ? "女" : "" }}
-            {{ form.sex == 1 ? "男" : "" }}
+          <view class="item-right">
+            <input class="ipt" disabled v-model="form.user.username" placeholder="获取失败" />
           </view>
-          <u-icon name="arrow-right" color="#666666" size="20rpx"></u-icon>
         </view>
       </view>
       <view class="items item">
         <text class="text">手机号码</text>
         <view class="item-right">
-          <input class="ipt" disabled v-model="form.phoneNumber" placeholder="获取失败" />
+          <input class="ipt" disabled v-model="form.phone" placeholder="获取失败" />
         </view>
+      </view>
+
+      <!-- 退出登录按钮 -->
+      <view class="logout-btn" @click="handleLogout">
+        <text>退出登录</text>
       </view>
     </view>
 
     <section class="btns" @click="submit">
       <view class="btn">确定</view>
     </section>
+
     <!-- 选择性别 -->
     <u-picker
       :show="show"
@@ -46,6 +50,8 @@
       @cancel="show = false"
       keyName="name"
     ></u-picker>
+
+    <u-loading-page :loading="uploadLoading" bgColor="#ffffff"></u-loading-page>
   </view>
 </template>
 
@@ -74,6 +80,8 @@ export default {
         phoneNumber: "", //手机号
         description: "",
       },
+      uploadLoading: false,
+      baseUrl: this.$store.state.vuex_baseUrl,
     };
   },
   onShow() {
@@ -86,40 +94,87 @@ export default {
     }
   },
   methods: {
-    selectSex() {
-      this.show = true;
-    },
-    selectedSex(list) {
-      // console.log(list);
-      this.form.sex = list.value[0].type;
-      this.show = false;
-    },
     // 上传头像
     uploadAvatar() {
       uni.chooseImage({
-        count: 1, //默认9
-        sizeType: ["compressed"], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
+        count: 1,
+        sizeType: ["compressed"],
+        sourceType: ["album", "camera"],
         success: (res) => {
-          const src = res.tempFilePaths[0];
-          uni.redirectTo({
-            url: "./herderPicture?src=" + src,
+          const tempFilePath = res.tempFilePaths[0];
+          this.uploadFile(tempFilePath);
+        },
+        fail: (err) => {
+          console.error("选择图片失败", err);
+          uni.showToast({
+            title: "选择图片失败",
+            icon: "none",
           });
         },
-        fail: (res) => {
-          console.log(res);
+      });
+    },
+
+    // 上传文件到服务器
+    uploadFile(filePath) {
+      this.uploadLoading = true;
+      uni.uploadFile({
+        url: this.baseUrl + "/user/upload/",
+        filePath: filePath,
+        name: "file",
+        formData: {
+          type: "avatar",
+        },
+        header: {
+          Authorization: "Bearer " + uni.getStorageSync("token"),
+        },
+        success: (uploadRes) => {
+          try {
+            const result = JSON.parse(uploadRes.data);
+            if (result.code === 200) {
+              this.form.avatar = result.data.url;
+              uni.showToast({
+                title: "上传成功",
+                icon: "success",
+              });
+              this.submit();
+            } else {
+              throw new Error(result.message || "上传失败");
+            }
+          } catch (e) {
+            uni.showToast({
+              title: e.message || "上传失败",
+              icon: "none",
+            });
+          }
+        },
+        fail: (err) => {
+          console.error("上传失败", err);
+          uni.showToast({
+            title: "上传失败",
+            icon: "none",
+          });
+        },
+        complete: () => {
+          this.uploadLoading = false;
         },
       });
     },
+
     getInfo() {
-      this.$api.userInfo().then((res) => {
-        this.form.avatar = res.data.user.avatar;
-        this.form = Object.assign(res.data.user, this.form);
-        this.form.phone = this.$fn.phoneEn(res.data.phone);
+      this.$api.getUserProFile().then((res) => {
+        if (res.code === 200) {
+          this.form = {
+            ...this.form,
+            ...res.data,
+            avatar: res.data.avatar || "",
+            phone: this.$fn.phoneEn(res.data.phone),
+          };
+        }
       });
     },
+
     submit() {
-      if (this.form.name == "") {
+      if (!this.form.nickname) {
         uni.showToast({
           mask: true,
           icon: "none",
@@ -128,16 +183,56 @@ export default {
         return;
       }
 
-      this.$api.setUser(this.form).then((res) => {
-        this.$fn
-          .A_showToast({
-            title: "保存成功",
-          })
-          .then(() => {
-            this._back(1);
+      const updateData = {
+        nickname: this.form.nickname,
+        avatar: this.form.avatar,
+      };
+
+      this.$api
+        .updateUserProFile(updateData)
+        .then((res) => {
+          if (res.code === 200) {
+            this.$u.toast("保存成功");
+            this.getInfo()
+            setTimeout(() => {
+              uni.switchTab({ url: '/pages/tabbar/mine' })
+            }, 1500);
+          } else {
+            uni.showToast({
+              title: res.message || "保存失败",
+              icon: "none",
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("更新失败", err);
+          uni.showToast({
+            title: "保存失败",
+            icon: "none",
           });
-      });
+        });
     },
+
+    // 退出登录
+    handleLogout() {
+      uni.showModal({
+        title: '提示',
+        content: '确定要退出登录吗？',
+        success: (res) => {
+          if (res.confirm) {
+            // 清除登录状态
+            uni.removeStorageSync('token');
+            uni.removeStorageSync('userInfo');
+            this.$store.state.vuex_token = '';
+            
+            // 跳转到登录页
+            uni.reLaunch({
+              url: '/pages/tabbar/login'
+            });
+          }
+        }
+      });
+    }
   },
 };
 </script>
@@ -242,6 +337,23 @@ export default {
     background: #ccc;
     border-color: #ccc;
     color: #999;
+  }
+}
+
+.logout-btn {
+  margin-top: 40rpx;
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+  padding: 32rpx 48rpx;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 30rpx;
+  display: inline-block;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  
+  &:active {
+    opacity: 0.8;
   }
 }
 </style>

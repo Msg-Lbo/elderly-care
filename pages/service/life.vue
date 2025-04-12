@@ -40,26 +40,36 @@
     </section>
     <section class="content" v-if="currentIndex === 1">
       <u-list height="80vh">
-        <view class="content-item" v-for="(item, index) in aricleList" :key="index"  @click="$fn.jumpPage('/pages/tabbar/agreement')">
+        <view
+          class="content-item"
+          v-for="(item, index) in articleList"
+          :key="index"
+          @click="$fn.jumpPage(`/pages/tabbar/agreement?id=${item.id}`)"
+        >
           <view class="left">
             <view class="title">{{ item.title }}</view>
-            <view class="desc"> {{ item.desc }} </view>
+            <view class="desc"> {{ item.description }} </view>
           </view>
           <view class="right">
-            <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+            <u-image :src="$sotre.vuex_imgUrl + item.cover" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
           </view>
         </view>
       </u-list>
     </section>
     <section class="content" v-if="currentIndex === 2">
       <u-list height="80vh">
-        <view class="content-item" v-for="(item, index) in aricleList" :key="index"  @click="$fn.jumpPage('/pages/tabbar/agreement')">
+        <view
+          class="content-item"
+          v-for="(item, index) in articleList"
+          :key="index"
+          @click="$fn.jumpPage(`/pages/tabbar/agreement?id=${item.id}`)"
+        >
           <view class="left">
             <view class="title">{{ item.title }}</view>
-            <view class="desc"> {{ item.desc }} </view>
+            <view class="desc"> {{ item.description }} </view>
           </view>
           <view class="right">
-            <u-image src="/static/common/l1.png" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
+            <u-image :src="$sotre.vuex_imgUrl + item.cover" width="250rpx" height="220rpx" mode="WidthFix"></u-image>
           </view>
         </view>
       </u-list>
@@ -75,46 +85,30 @@ export default {
       list: [
         {
           name: "生活照护",
-        },
-        {
-          name: "交通百科",
-        },
-        {
-          name: "健康百科",
-        },
+        }
       ],
-<<<<<<< HEAD
-      articleList:[]
-=======
-      aricleList: [
-        {
-          title: "文章标题",
-          desc: "文章介绍",
-        },
-      ],
->>>>>>> 5a8d6cd50aa11f0a40fd3ab9c784604ea6accf19
+      articleList: [],
     };
   },
-  onShow(){
-    console.log(12312);
-    
-    this.getArticleList();
+  onShow() {
+    this.getArticleList("交通百科");
   },
   methods: {
     handleTabClick(item) {
-      console.log(item);
       this.currentIndex = item.index;
+      // 筛选所有item.name对应的文章并返回
+      this.getArticleList(item.name);
     },
 
     // 获取文章列表
-   async getArticleList() {
+    async getArticleList(category) {
       try {
-        const res = await this.$api.getArticles();
-        console.log(res);
-
+        const res = await this.$api.getArticles({ category });
+        if (res.code === 200) {
+          this.articleList = res.data;
+        }
       } catch (error) {
         console.log(error);
-        
       }
     },
   },

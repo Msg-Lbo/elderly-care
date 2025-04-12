@@ -2,18 +2,23 @@
   <view class="search-list">
     <section class="content">
       <view class="search-bar">
-        <u-search placeholder="请输入关键词" height="50" animation v-model="searchValue"></u-search>
+        <u-search placeholder="请输入关键词" height="50" animation v-model="searchValue" @search="getArticleList"></u-search>
       </view>
       <u-list>
         <view class="list">
-          <view class="item">
+          <view
+            class="item"
+            v-for="(item, index) in articleList"
+            :key="index"
+            @click="$fn.jumpPage(`/pages/tabbar/agreement?id=${item.id}`)"
+          >
             <view class="left">
               <view class="cover">
-                <u-image src="/static/common/c1.png" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
+                <u-image :src="img_url + item.cover" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
               </view>
               <view class="info">
-                <view class="title"> Lorem ipsum dolor sit </view>
-                <view class="desc"> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. </view>
+                <view class="title">{{ item.title }}</view>
+                <view class="desc">{{ item.description }}</view>
               </view>
             </view>
             <view class="right">
@@ -30,14 +35,27 @@
 export default {
   data() {
     return {
+      img_url: "http://127.0.0.1:8000",
       searchValue: "",
       type: "",
+      articleList: [],
     };
   },
   onLoad(options) {
-    this.type = options.type;
+    this.getArticleList();
   },
-  methods: {},
+  methods: {
+    async getArticleList() {
+      try {
+        const res = await this.$api.getArticlesBySearch(this.searchValue);
+        if (res.code === 200) {
+          this.articleList = res.data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 };
 </script>
 

@@ -36,7 +36,7 @@ const store = new Vuex.Store({
 		vuex_token: lifeData.vuex_token || '',// token
 		
 		vuex_baseUrl: "http://127.0.0.1:8000/api", //h5跨域地址
-		vuex_imgUrl: "http://127.0.0.1:8000/upload",
+		vuex_imgUrl: "http://127.0.0.1:8000",
 		// vuex_baseUrl: "https://mf2.mufengweilai.com/prod-api", //接口地址
 		// vuex_imgUrl: 'https://common-mfwl.obs.cn-southwest-2.myhuaweicloud.com', //图片地址
 		// h5项目如需反向代理请配置路径api后缀 如vuex_baseUrl: 'http://localhost:8080/api', 

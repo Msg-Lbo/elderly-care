@@ -15,19 +15,19 @@
       <view class="service-content">
         <view class="user">
           <view class="user-avatar">
-            <u-image src="https://picsum.photos/100/100" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
+            <u-image :src="vuex_imgUrl + userInfo.avatar" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
           </view>
           <view class="user-desc">
-            <view class="user-name">{{ userInfo.name }}</view>
+            <view class="user-name">{{ userInfo.nickname }}</view>
             <view class="user-phone">{{ userInfo.phone }}</view>
           </view>
-          <view class="qr-code">
+          <view class="qr-code" @click="showQrCode">
             <u-image src="/static/common/qr-code.png" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
           </view>
         </view>
         <view class="health-id">
           <text style="color: #606060">电子健康卡</text>
-          <text style="color: #a3a3a3">[{{ userInfo.healthId }}]</text>
+          <text style="color: #a3a3a3">[{{ userInfo.health_id }}]</text>
         </view>
         <view class="health-manager">
           <view class="card">
@@ -48,7 +48,7 @@
     </section>
     <section class="health-service" v-if="activeTab === 1">
       <view class="left">
-        <view class="service-item" @click="handleAppointment">
+        <view class="service-item" @click="handleAppointment(`https://www.114gh.com/yy/sc/`)">
           <view class="title">预约挂号</view>
           <view class="desc">专家号在线预约</view>
           <view class="service-icon">
@@ -57,7 +57,7 @@
         </view>
       </view>
       <view class="right">
-        <view class="service-item">
+        <view class="service-item" @click="handleAppointment(`https://www.114gh.com/mingyihui/`)">
           <view>
             <view class="title">线上问诊</view>
             <view class="desc">专家在线解答</view>
@@ -66,7 +66,7 @@
             <u-image src="/static/common/c8.png" width="60rpx" height="80rpx" mode="aspectFill"></u-image>
           </view>
         </view>
-        <view class="service-item" @click="openNavigation">
+        <view class="service-item" @click="handleAppointment(`https://www.114gh.com/yy/sc/`)">
           <view>
             <view class="title">线下导医</view>
             <view class="desc">长者就医无压力</view>
@@ -88,6 +88,27 @@
         </view>
       </view>
     </section>
+    <!-- 二维码弹窗 -->
+    <u-popup :show="showQrCodePopup" mode="center" width="80%" border-radius="20" @close="showQrCodePopup = false">
+      <view class="qr-code-popup">
+        <view class="popup-title">电子健康卡</view>
+        <view class="popup-content">
+          <view class="user-info">
+            <view class="avatar">
+              <u-image :src="vuex_imgUrl + userInfo.avatar" width="120rpx" height="120rpx" mode="aspectFill" shape="circle"></u-image>
+            </view>
+            <view class="info">
+              <view class="name">{{ userInfo.nickname }}</view>
+              <view class="health-id">健康卡号：{{ userInfo.health_id }}</view>
+            </view>
+          </view>
+          <view class="qrcode-container">
+            <u-image :src="`https://api.qrtool.cn/?text=${userInfo.health_id}`" width="240" height="240" mode="aspectFill"></u-image>
+          </view>
+          <view class="tips">请出示此二维码进行就医</view>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
@@ -96,6 +117,7 @@ export default {
   data() {
     return {
       activeTab: 1,
+      showQrCodePopup: false,
       userInfo: {
         name: "张三",
         phone: "13800138000",
@@ -118,7 +140,7 @@ export default {
           unit: "%",
           icon: "/static/common/h2.png",
         },
-        
+
         {
           label: "血糖",
           value: 80,
@@ -140,12 +162,59 @@ export default {
       ],
     };
   },
+  onLoad() {
+    this.getUserInfo(); // 页面加载时获取用户信息
+  },
   methods: {
     // 切换tab
     handleSwitch(value) {
       this.activeTab = value;
     },
-
+    showQrCode() {
+      this.showQrCodePopup = true;
+    },
+    drawQrcode() {
+      const healthId = this.userInfo.health_id || "";
+      const qrCodeUrl = `https://api.qrtool.cn/?text=${encodeURIComponent(healthId)}`;
+      return qrCodeUrl;
+    },
+    getUserInfo() {
+      this.$api
+        .getUserProFile()
+        .then((res) => {
+          if (res.code === 200) {
+            this.userInfo = res.data; // 存储用户信息
+            this.healthData.map((item) => {
+              if (item.label === "血压") {
+                item.value = this.userInfo.blood_pressure;
+              }
+              if (item.label === "血氧") {
+                item.value = this.userInfo.blood_oxygen;
+              }
+              if (item.label === "血糖") {
+                item.value = this.userInfo.blood_sugar;
+              }
+              if (item.label === "体温") {
+                item.value = this.userInfo.temperature;
+              }
+              if (item.label === "体重") {
+                item.value = this.userInfo.weight;
+              }
+            });
+          } else {
+            uni.showToast({
+              title: res.message || "获取用户信息失败",
+              icon: "none",
+            });
+          }
+        })
+        .catch((err) => {
+          uni.showToast({
+            title: "获取用户信息失败，请重试",
+            icon: "none",
+          });
+        });
+    },
     // 打开导航
     openNavigation() {
       // 获取当前位置
@@ -183,13 +252,26 @@ export default {
     },
 
     // 处理预约挂号
-    handleAppointment() {
-      // 打开链接
+    handleAppointment(link) {
+      // 使用小程序码或短链接跳转
+      const shortLink = "https://www.114gh.com/yy/sc/"; // 这里替换为实际的短链接
+      
+      // 复制短链接到剪贴板
       uni.setClipboardData({
-        data: "#小程序://预约挂号网/Fn6LYLkQFrelKQE",
+        data: link,
         success: () => {
-          uni.showToast({ title: "复制成功，请打开微信", icon: "none" });
-        },
+          uni.showModal({
+            title: '提示',
+            content: '链接已复制，请在浏览器中打开',
+            showCancel: false,
+            success: () => {
+              // 用户点击确定后，打开浏览器
+              uni.navigateTo({
+                url: `/pages/webview/webview?url=${encodeURIComponent(link)}`
+              });
+            }
+          });
+        }
       });
     },
   },
@@ -212,7 +294,7 @@ export default {
     .service-name {
       padding: 20rpx;
       border-radius: 20rpx 20rpx 0 0;
-      font-size: 40rpx;
+      font-size: 48rpx;
       color: #fff;
       position: relative;
     }
@@ -258,12 +340,12 @@ export default {
           flex: 1;
 
           .user-name {
-            font-size: 50rpx;
+            font-size: 56rpx;
             color: #333;
           }
 
           .user-phone {
-            font-size: 30rpx;
+            font-size: 36rpx;
             color: #606060;
           }
         }
@@ -277,7 +359,7 @@ export default {
         display: flex;
         align-items: center;
         text-align: center;
-        font-size: 30rpx;
+        font-size: 36rpx;
       }
 
       .health-manager {
@@ -311,7 +393,7 @@ export default {
 
           .card-name {
             margin-top: 20rpx;
-            font-size: 40rpx;
+            font-size: 48rpx;
             color: #333;
             text-align: center;
           }
@@ -369,11 +451,11 @@ export default {
       color: #606060;
 
       .title {
-        font-size: 40rpx;
+        font-size: 48rpx;
       }
 
       .desc {
-        font-size: 30rpx;
+        font-size: 36rpx;
       }
     }
   }
@@ -396,28 +478,90 @@ export default {
       .monitor-flex {
         display: flex;
         flex-direction: column;
-        gap: 160rpx;
+        gap: 130rpx;
 
         .monitor-title {
-          font-size: 40rpx;
-          color: #333;
-          font-size: 40rpx;
+          font-size: 48rpx;
           color: #333;
         }
 
         .monitor-value {
-          font-size: 30rpx;
+          font-size: 40rpx;
           color: #333;
         }
       }
 
       .monitor-icon {
         overflow: hidden;
-        margin-top: 20rpx;
+        // margin-top: 20rpx;
         position: absolute;
-        bottom: 40rpx;
+        top: 20rpx;
         right: 40rpx;
       }
+    }
+  }
+}
+
+.qr-code-popup {
+  padding: 30rpx;
+
+  .popup-title {
+    font-size: 44rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30rpx;
+  }
+
+  .popup-content {
+    background-color: #fff;
+    border-radius: 20rpx;
+    padding: 30rpx;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 20rpx;
+      margin-bottom: 30rpx;
+
+      .avatar {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .info {
+        flex: 1;
+
+        .name {
+          font-size: 40rpx;
+          font-weight: bold;
+          margin-bottom: 10rpx;
+        }
+
+        .health-id {
+          font-size: 36rpx;
+          color: #666;
+        }
+      }
+    }
+
+    .qrcode-container {
+      display: flex;
+      justify-content: center;
+      margin: 30rpx 0;
+
+      .qrcode {
+        width: 400rpx;
+        height: 400rpx;
+      }
+    }
+
+    .tips {
+      text-align: center;
+      font-size: 36rpx;
+      color: #999;
+      margin-top: 20rpx;
     }
   }
 }

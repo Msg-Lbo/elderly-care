@@ -5,6 +5,7 @@
 			console.log('当前版本号:', this.vuex_version);
 			this.listenForUpdates(); //监听更新
 		},
+	
 		methods: {
 			//监听小程序是否有新版本需要更新
 			listenForUpdates() {

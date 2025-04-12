@@ -3,14 +3,17 @@
     <section class="content">
       <view class="user" @click="$fn.jumpPage('/pages/my/information')">
         <view class="left">
-          <u-image :src="userInfo.avatar" width="120" height="120" mode="aspectFill"></u-image>
+          <u-image :src="vuex_imgUrl + userInfo.avatar" width="120" height="120" mode="aspectFill"></u-image>
         </view>
         <view class="right">
           <view class="name">
-            <text>{{ userInfo.name }}</text>
+            <text>{{ userInfo.nickname }}</text>
           </view>
           <view class="account">
-            <text>账号：{{ userInfo.phone }}</text>
+            <text>账号：{{ userInfo.user.username }}</text>
+          </view>
+          <view class="account">
+            <text>手机号：{{ userInfo.phone }}</text>
           </view>
         </view>
       </view>
@@ -51,6 +54,22 @@
             </view>
           </view>
         </view>
+        <!-- 监护人列表 -->
+        <view class="guardian-list" v-if="userInfo.guardians && userInfo.guardians.length > 0">
+          <view class="guardian-item" v-for="item in userInfo.guardians" :key="item.id">
+            <view class="guardian-info">
+              <u-image :src="vuex_imgUrl + item.guardian.avatar" width="80" height="80" mode="aspectFill" shape="circle"></u-image>
+              <view class="guardian-detail">
+                <view class="guardian-name">{{ item.guardian.nickname }}</view>
+                <view class="guardian-relation">关系：{{ item.relationship }}</view>
+                <view class="guardian-phone">电话：{{ item.guardian.phone }}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="empty-guardian" v-else>
+          <text>暂无监护人</text>
+        </view>
       </view>
     </section>
   </view>
@@ -60,14 +79,24 @@
 export default {
   data() {
     return {
-      userInfo: {
-        name: "张三",
-        phone: "13800138000",
-        avatar: "/static/mine/m1.png",
-      },
+      userInfo: {},
     };
   },
-  methods: {},
+  onShow() {
+    this.getUserProfile();
+  },
+  methods: {
+    // 获取用户信息
+    async getUserProfile() {
+      try {
+        const res = await this.$api.getUserProFile();
+        if (res.code == 200) {
+          this.userInfo = res.data;
+          uni.setStorageSync("userInfo", res.data);
+        }
+      } catch (err) {}
+    },
+  },
 };
 </script>
 
@@ -87,6 +116,9 @@ export default {
         margin-right: 24rpx;
       }
       .right {
+        display: flex;
+        flex-direction: column;
+        gap: 16rpx;
         .name {
           font-size: 48rpx;
           font-weight: bold;
@@ -128,6 +160,47 @@ export default {
           }
         }
       }
+    }
+    .guardian-list {
+      margin-top: 24rpx;
+      .guardian-item {
+        background-color: #f7f7f7;
+        border-radius: 12rpx;
+        padding: 20rpx;
+        margin-bottom: 16rpx;
+
+        .guardian-info {
+          display: flex;
+          align-items: center;
+          gap: 20rpx;
+
+          .guardian-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8rpx;
+
+            .guardian-name {
+              font-size: 32rpx;
+              font-weight: bold;
+              color: #333;
+            }
+
+            .guardian-relation,
+            .guardian-phone {
+              font-size: 28rpx;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+
+    .empty-guardian {
+      text-align: center;
+      padding: 40rpx 0;
+      color: #999;
+      font-size: 28rpx;
     }
   }
 }
