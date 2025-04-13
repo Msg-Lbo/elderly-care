@@ -176,7 +176,7 @@ export default {
             })
             setTimeout(() => {
               uni.navigateBack()
-            }, 1500)
+            }, 1000)
           } else {
             uni.showToast({
               title: res.message || '更新失败',
@@ -199,7 +199,7 @@ export default {
             })
             setTimeout(() => {
               uni.navigateBack()
-            }, 1500)
+            }, 1000)
           } else {
             uni.showToast({
               title: res.message || '添加失败',

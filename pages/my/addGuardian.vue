@@ -163,7 +163,9 @@ export default {
                         });
                         this.showAddPopup = false;
                         setTimeout(() => {
-                            uni.navigateBack();
+                            uni.switchTab({
+                                url: '/pages/tabbar/mine'
+                            });
                         }, 1500);
                     } else {
                         uni.showToast({

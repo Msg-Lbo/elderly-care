@@ -25,7 +25,7 @@
             <u-image src="/static/common/qr-code.png" width="100rpx" height="100rpx" mode="aspectFill"></u-image>
           </view>
         </view>
-        <view class="health-id">
+        <view class="health-id" @click="showHealthIdEdit">
           <text style="color: #606060">电子健康卡</text>
           <text style="color: #a3a3a3">[{{ userInfo.health_id }}]</text>
         </view>
@@ -87,6 +87,14 @@
           <u-image :src="item.icon" width="80rpx" height="100rpx" mode="WidthFix"></u-image>
         </view>
       </view>
+      <view class="monitor-item edit-btn" @click="showHealthDataEdit">
+      <view class="monitor-flex">
+          <view class="monitor-title">修改健康数据</view>
+        </view>
+        <view class="monitor-icon">
+          <u-icon name="edit-pen" color="#333" size="60"></u-icon>
+        </view>
+      </view>
     </section>
     <!-- 二维码弹窗 -->
     <u-popup :show="showQrCodePopup" mode="center" width="80%" border-radius="20" @close="showQrCodePopup = false">
@@ -109,6 +117,43 @@
         </view>
       </view>
     </u-popup>
+    <!-- 健康卡编辑弹窗 -->
+    <u-popup :show="showHealthIdEditPopup" mode="center" width="80%" border-radius="20" @close="showHealthIdEditPopup = false">
+      <view class="health-id-popup">
+        <view class="popup-title">编辑电子健康卡</view>
+        <view class="popup-content">
+          <view class="form-item">
+            <view class="form-label">健康卡号</view>
+            <view class="form-input">
+              <input type="text" v-model="healthIdForm.health_id" placeholder="请输入健康卡号" />
+            </view>
+          </view>
+          <view class="popup-btns">
+            <u-button type="default" @click="showHealthIdEditPopup = false">取消</u-button>
+            <u-button type="primary" @click="handleUpdateHealthId">确定</u-button>
+          </view>
+        </view>
+      </view>
+    </u-popup>
+    <!-- 健康数据编辑弹窗 -->
+    <u-popup :show="showHealthDataEditPopup" mode="center" width="80%" border-radius="20" @close="showHealthDataEditPopup = false">
+      <view class="health-data-popup">
+        <view class="popup-title">编辑健康数据</view>
+        <view class="popup-content">
+          <view class="form-item" v-for="item in healthData" :key="item.label">
+            <view class="form-label">{{ item.label }}</view>
+            <view class="form-input">
+              <input type="number" v-model="healthDataForm[item.field]" :placeholder="`请输入${item.label}`" />
+              <text class="unit">{{ item.unit }}</text>
+            </view>
+          </view>
+          <view class="popup-btns">
+            <u-button type="default" @click="showHealthDataEditPopup = false">取消</u-button>
+            <u-button type="primary" @click="handleUpdateHealthData">确定</u-button>
+          </view>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
@@ -118,6 +163,18 @@ export default {
     return {
       activeTab: 1,
       showQrCodePopup: false,
+      showHealthIdEditPopup: false,
+      showHealthDataEditPopup: false,
+      healthIdForm: {
+        health_id: ''
+      },
+      healthDataForm: {
+        blood_pressure: '',
+        blood_oxygen: '',
+        blood_sugar: '',
+        temperature: '',
+        weight: ''
+      },
       userInfo: {
         name: "张三",
         phone: "13800138000",
@@ -133,32 +190,36 @@ export default {
           value: 100,
           unit: "mmHg",
           icon: "/static/common/h1.png",
+          field: "blood_pressure"
         },
         {
           label: "血氧",
           value: 90,
           unit: "%",
           icon: "/static/common/h2.png",
+          field: "blood_oxygen"
         },
-
         {
           label: "血糖",
           value: 80,
           unit: "mg/dl",
           icon: "/static/common/h3.png",
+          field: "blood_sugar"
         },
         {
           label: "体温",
           value: 36.5,
           unit: "°C",
           icon: "/static/common/h4.png",
+          field: "temperature"
         },
         {
           label: "体重",
           value: 70,
           unit: "kg",
           icon: "/static/common/h5.png",
-        },
+          field: "weight"
+        }
       ],
     };
   },
@@ -272,6 +333,87 @@ export default {
             }
           });
         }
+      });
+    },
+    showHealthIdEdit() {
+      this.healthIdForm.health_id = this.userInfo.health_id;
+      this.showHealthIdEditPopup = true;
+    },
+    handleUpdateHealthId() {
+      if (!this.healthIdForm.health_id) {
+        uni.showToast({
+          title: '请输入健康卡号',
+          icon: 'none'
+        });
+        return;
+      }
+      
+      this.$api.updateUserProFile(this.healthIdForm).then(res => {
+        if (res.code === 200) {
+          uni.showToast({
+            title: '更新成功',
+            icon: 'success'
+          });
+          this.userInfo.health_id = this.healthIdForm.health_id;
+          this.showHealthIdEditPopup = false;
+        } else {
+          uni.showToast({
+            title: res.message || '更新失败',
+            icon: 'none'
+          });
+        }
+      }).catch(err => {
+        uni.showToast({
+          title: '更新失败，请重试',
+          icon: 'none'
+        });
+      });
+    },
+    showHealthDataEdit() {
+      // 初始化表单数据
+      this.healthDataForm = {
+        blood_pressure: this.userInfo.blood_pressure || '',
+        blood_oxygen: this.userInfo.blood_oxygen || '',
+        blood_sugar: this.userInfo.blood_sugar || '',
+        temperature: this.userInfo.temperature || '',
+        weight: this.userInfo.weight || ''
+      };
+      this.showHealthDataEditPopup = true;
+    },
+    handleUpdateHealthData() {
+      // 验证数据
+      for (let item of this.healthData) {
+        if (!this.healthDataForm[item.field]) {
+          uni.showToast({
+            title: `请输入${item.label}`,
+            icon: 'none'
+          });
+          return;
+        }
+      }
+
+      this.$api.updateUserProFile(this.healthDataForm).then(res => {
+        if (res.code === 200) {
+          uni.showToast({
+            title: '更新成功',
+            icon: 'success'
+          });
+          // 更新本地数据
+          this.healthData.forEach(item => {
+            item.value = this.healthDataForm[item.field];
+          });
+          this.showHealthDataEditPopup = false;
+        } else {
+          uni.showToast({
+            title: res.message || '更新失败',
+            icon: 'none'
+          });
+        }
+      }).catch(err => {
+        uni.showToast({
+          title: '更新失败，请重试',
+          icon: 'none'
+        });
       });
     },
   },
@@ -492,11 +634,23 @@ export default {
       }
 
       .monitor-icon {
-        overflow: hidden;
-        // margin-top: 20rpx;
         position: absolute;
-        top: 20rpx;
-        right: 40rpx;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80rpx;
+        height: 100rpx;
+      }
+    }
+
+    .edit-btn {
+      cursor: pointer;
+      
+      &:active {
+        opacity: 0.8;
       }
     }
   }
@@ -562,6 +716,114 @@ export default {
       font-size: 36rpx;
       color: #999;
       margin-top: 20rpx;
+    }
+  }
+}
+
+.health-id-popup {
+  padding: 30rpx;
+
+  .popup-title {
+    font-size: 44rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30rpx;
+  }
+
+  .popup-content {
+    background-color: #fff;
+    border-radius: 20rpx;
+    padding: 30rpx;
+
+    .form-item {
+      margin-bottom: 30rpx;
+
+      .form-label {
+        font-size: 32rpx;
+        color: #333;
+        margin-bottom: 20rpx;
+      }
+
+      .form-input {
+        input {
+          width: 100%;
+          height: 80rpx;
+          background-color: #f7f7f7;
+          border-radius: 10rpx;
+          padding: 0 20rpx;
+          font-size: 32rpx;
+        }
+      }
+    }
+
+    .popup-btns {
+      display: flex;
+      justify-content: space-between;
+      gap: 20rpx;
+      margin-top: 40rpx;
+
+      .u-button {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.health-data-popup {
+  padding: 30rpx;
+
+  .popup-title {
+    font-size: 44rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30rpx;
+  }
+
+  .popup-content {
+    background-color: #fff;
+    border-radius: 20rpx;
+    padding: 30rpx;
+
+    .form-item {
+      margin-bottom: 30rpx;
+
+      .form-label {
+        font-size: 32rpx;
+        color: #333;
+        margin-bottom: 20rpx;
+      }
+
+      .form-input {
+        display: flex;
+        align-items: center;
+        gap: 20rpx;
+
+        input {
+          flex: 1;
+          height: 80rpx;
+          background-color: #f7f7f7;
+          border-radius: 10rpx;
+          padding: 0 20rpx;
+          font-size: 32rpx;
+        }
+
+        .unit {
+          font-size: 32rpx;
+          color: #666;
+          min-width: 80rpx;
+        }
+      }
+    }
+
+    .popup-btns {
+      display: flex;
+      justify-content: space-between;
+      gap: 20rpx;
+      margin-top: 40rpx;
+
+      .u-button {
+        flex: 1;
+      }
     }
   }
 }

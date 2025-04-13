@@ -10,7 +10,7 @@
             class="item"
             v-for="(item, index) in articleList"
             :key="index"
-            @click="$fn.jumpPage(`/pages/tabbar/agreement?id=${item.id}`)"
+            @click="$fn.jumpPage(`/pages/tabbar/articleDetail?id=${item.id}`)"
           >
             <view class="left">
               <view class="cover">

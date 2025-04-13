@@ -144,7 +144,7 @@ export default {
         .updateServiceDetail({
           id: this.currentItem.id,
           client: this.currentItem.client.id,
-          caregiver: this.currentItem.caregiver.id,
+          caregiver: this.currentItem.caregiver ? this.currentItem.caregiver.id : null,
           service_type: this.currentItem.service_type,
           service_time: this.currentItem.service_time,
           address: this.currentItem.address,
