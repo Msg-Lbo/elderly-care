@@ -26,7 +26,7 @@ const getCommunityActivity = (data = {}, config) => http.get('/community/activit
 const getActivities = (data = {}, config) => http.get('/activity/activities/', data, config)
 const getActivityDetail = (data = {}, config) => http.get(`/activity/activities/${data}/`, data, config)
 const activityRegister = (data = {}, config) => http.post(`/activity/activities/${data.activity}/register/`, data, config)
-const createServices = (data = {}, config) => http.post('/service/services', data, config)
+const createServices = (data = {}, config) => http.post('/service/services/', data, config)
 const getServiceList = (data = {}, config) => http.get('/service/services/?status=' + data, data, config)
 const getServiceDetail = (data = {}, config) => http.get(`/service/services/${data}/`, data, config)
 const updateServiceDetail = (data = {}, config) => http.post(`/service/services/${data.id}/update/`, data, config)

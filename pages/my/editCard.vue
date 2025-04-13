@@ -103,9 +103,9 @@ export default {
       }
 
       // 验证银行卡号
-      if (!this.validateCardNumber(this.form.number)) {
+      if (!this.form.number) {
         uni.showToast({
-          title: "请输入正确的银行卡号",
+          title: "请输入正确的卡号",
           icon: "none",
         });
         return;
