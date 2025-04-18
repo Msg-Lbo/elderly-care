@@ -26,6 +26,7 @@ const getCommunityActivity = (data = {}, config) => http.get('/community/activit
 const getActivities = (data = {}, config) => http.get('/activity/activities/', data, config)
 const getActivityDetail = (data = {}, config) => http.get(`/activity/activities/${data}/`, data, config)
 const activityRegister = (data = {}, config) => http.post(`/activity/activities/${data.activity}/register/`, data, config)
+const activityCancleRegister = (data = {}, config) => http.post(`/activity/activities/${data.activity}/cancel_registration/`, data, config)
 const createServices = (data = {}, config) => http.post('/service/services/create/', data, config)
 const getServiceList = (data = {}, config) => http.get('/service/services/?status=' + data, data, config)
 const getServiceDetail = (data = {}, config) => http.get(`/service/services/${data}/`, data, config)
@@ -64,7 +65,8 @@ let apiList = {
 	getCommunityActivity, // 获取社区活动
 	getActivities, // 获取活动列表
 	getActivityDetail, // 获取活动详情
-	activityRegister, // 活动报名,
+	activityRegister, // 活动报名
+	activityCancleRegister, // 活动取消报名
 	createServices, // 创建服务
 	getServiceList, // 获取服务列表
 	getServiceDetail, // 获取服务详情

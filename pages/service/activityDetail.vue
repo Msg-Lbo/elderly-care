@@ -25,7 +25,8 @@
       </view>
 
       <view class="action">
-        <u-button type="primary" @click="handleSignup"> 立即报名 </u-button>
+        <u-button type="primary" v-if="!activity.is_registered" @click="handleSignup"> 立即报名 </u-button>
+        <u-button type="warning" v-else @click="handleCancelSignup"> 取消报名 </u-button>
       </view>
     </view>
   </view>
@@ -35,14 +36,7 @@
 export default {
   data() {
     return {
-      activity: {
-        title: "",
-        cover: "",
-        start_time: "",
-        end_time: "",
-        signup_count: 0,
-        content: "",
-      },
+      activity: {},
       img_url: "http://127.0.0.1:8000/",
     };
   },
@@ -66,13 +60,34 @@ export default {
     formatDate(timestamp) {
       return new Date(timestamp).toLocaleDateString();
     },
-
+    // 报名
     handleSignup() {
       this.$api.activityRegister({ activity: this.activity.id }).then((res) => {
         if (res.code === 200) {
           this.activity.signup_count++;
+          this.activity.is_registered = true;
           uni.showToast({
             title: "报名成功",
+            icon: "success",
+            duration: 2000,
+          });
+        } else {
+          uni.showToast({
+            title: res.message,
+            icon: "none",
+            duration: 2000,
+          });
+        }
+      });
+    },
+    // 取消报名
+    handleCancelSignup() {
+      this.$api.activityCancleRegister({ activity: this.activity.id }).then((res) => {
+        if (res.code === 200) {
+          this.activity.signup_count--;
+          this.activity.is_registered = false;
+          uni.showToast({
+            title: "取消报名成功",
             icon: "success",
             duration: 2000,
           });
